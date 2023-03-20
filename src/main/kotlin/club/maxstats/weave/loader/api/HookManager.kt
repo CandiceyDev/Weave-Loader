@@ -27,16 +27,20 @@ class HookManager {
     )
 
     fun register(vararg hooks: Hook) {
+        if (hooks.isEmpty()) return
         this.hooks += hooks
     }
 
-    fun register(name: String, block: Consumer<ClassNode>) = hooks.add(
-        object : Hook(mutableListOf(name)) {
-            override fun transform(node: ClassNode, cfg: AssemblerConfig) {
-                block.accept(node)
+    fun register(name: List<String>, block: Consumer<ClassNode>) {
+        if (name.isEmpty()) return
+        hooks.add(
+            object : Hook(name) {
+                override fun transform(node: ClassNode, cfg: AssemblerConfig) {
+                    block.accept(node)
+                }
             }
-        }
-    )
+        )
+    }
 
     internal inner class Transformer : SafeTransformer {
 
