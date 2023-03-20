@@ -31,7 +31,7 @@ class HookManager {
     }
 
     fun register(name: String, block: Consumer<ClassNode>) = hooks.add(
-        object : Hook(name) {
+        object : Hook(mutableListOf(name)) {
             override fun transform(node: ClassNode, cfg: AssemblerConfig) {
                 block.accept(node)
             }
@@ -45,7 +45,7 @@ class HookManager {
             className: String,
             originalClass: ByteArray
         ): ByteArray? {
-            val hooks = hooks.filter { it.targetClassName == className }
+            val hooks = hooks.filter { it.targetClassName.contains(className) }
             if (hooks.isEmpty()) return null
 
             val node = ClassNode()
